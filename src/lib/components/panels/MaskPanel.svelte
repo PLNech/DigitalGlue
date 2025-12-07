@@ -34,6 +34,25 @@
 		historyStore.snapshot('Toggle mask invert');
 	}
 
+	// Map scale (10-500%) to slider position (0-100)
+	// 0-50: maps to 10-100% (left half)
+	// 50-100: maps to 100-500% (right half)
+	function maskScaleToSlider(scale: number): number {
+		if (scale <= 100) {
+			return ((scale - 10) / 90) * 50; // 10-100% -> 0-50
+		} else {
+			return 50 + ((scale - 100) / 400) * 50; // 100-500% -> 50-100
+		}
+	}
+
+	function sliderToMaskScale(slider: number): number {
+		if (slider <= 50) {
+			return Math.round(10 + (slider / 50) * 90); // 0-50 -> 10-100%
+		} else {
+			return Math.round(100 + ((slider - 50) / 50) * 400); // 50-100 -> 100-500%
+		}
+	}
+
 	let fileInput: HTMLInputElement;
 
 	async function handleMaskUpload(event: Event) {
@@ -167,11 +186,11 @@
 			</label>
 			<input
 				type="range"
-				min="10"
-				max="500"
-				value={$projectState.mask.scale}
+				min="0"
+				max="100"
+				value={maskScaleToSlider($projectState.mask.scale)}
 				oninput={(e) =>
-					projectState.updateMask({ scale: parseInt(e.currentTarget.value) })}
+					projectState.updateMask({ scale: sliderToMaskScale(parseInt(e.currentTarget.value)) })}
 				class="slider"
 			/>
 		</div>

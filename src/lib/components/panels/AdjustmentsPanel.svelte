@@ -28,6 +28,25 @@
 		historyStore.snapshot(`Reset ${target} adjustments`);
 	}
 
+	// Map scale (10-500%) to slider position (0-100)
+	// 0-50: maps to 10-100% (left half)
+	// 50-100: maps to 100-500% (right half)
+	function scaleToSlider(scale: number): number {
+		if (scale <= 100) {
+			return ((scale - 10) / 90) * 50; // 10-100% -> 0-50
+		} else {
+			return 50 + ((scale - 100) / 400) * 50; // 100-500% -> 50-100
+		}
+	}
+
+	function sliderToScale(slider: number): number {
+		if (slider <= 50) {
+			return Math.round(10 + (slider / 50) * 90); // 0-50 -> 10-100%
+		} else {
+			return Math.round(100 + ((slider - 50) / 50) * 400); // 50-100 -> 100-500%
+		}
+	}
+
 	// Get current source config based on active target
 	let currentSource = $derived(
 		activeTarget === 'source1'
@@ -85,11 +104,11 @@
 					</label>
 					<input
 						type="range"
-						min="10"
-						max="500"
-						value={currentSource.scale}
+						min="0"
+						max="100"
+						value={scaleToSlider(currentSource.scale)}
 						oninput={(e) =>
-							updateAdjustment(activeTarget, 'scale', parseInt(e.currentTarget.value))}
+							updateAdjustment(activeTarget, 'scale', sliderToScale(parseInt(e.currentTarget.value)))}
 						class="slider"
 					/>
 				</div>
