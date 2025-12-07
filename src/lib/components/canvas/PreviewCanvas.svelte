@@ -302,9 +302,18 @@
 			}
 		}
 
-		// Calculate scaling
+		// Move to center for transforms
+		ctx.translate(width / 2, height / 2);
+
+		// Apply rotation if specified
+		if (sourceConfig && sourceConfig.rotation !== 0) {
+			ctx.rotate((sourceConfig.rotation * Math.PI) / 180);
+		}
+
+		// Calculate scaling - use Math.max for "cover" (fill canvas, may crop)
+		// This prevents black bands when aspect ratios don't match
 		const userScale = sourceConfig ? sourceConfig.scale / 100 : 1;
-		const fitScale = Math.min(width / img.width, height / img.height);
+		const fitScale = Math.max(width / img.width, height / img.height); // COVER mode, not contain
 		const combinedScale = fitScale * userScale;
 		const scaledWidth = img.width * combinedScale;
 		const scaledHeight = img.height * combinedScale;
@@ -320,24 +329,24 @@
 			const wrapY = ((offsetYPx % scaledHeight) + scaledHeight) % scaledHeight;
 
 			// Calculate how many tiles needed to cover canvas
-			const startX = Math.floor(-wrapX / scaledWidth) - 1;
-			const endX = Math.ceil((width - wrapX) / scaledWidth) + 1;
-			const startY = Math.floor(-wrapY / scaledHeight) - 1;
-			const endY = Math.ceil((height - wrapY) / scaledHeight) + 1;
+			const halfW = width / 2;
+			const halfH = height / 2;
+			const startX = Math.floor((-halfW - wrapX) / scaledWidth) - 1;
+			const endX = Math.ceil((halfW - wrapX) / scaledWidth) + 1;
+			const startY = Math.floor((-halfH - wrapY) / scaledHeight) - 1;
+			const endY = Math.ceil((halfH - wrapY) / scaledHeight) + 1;
 
-			// Draw tiled pattern
+			// Draw tiled pattern (relative to center)
 			for (let ty = startY; ty <= endY; ty++) {
 				for (let tx = startX; tx <= endX; tx++) {
-					const x = tx * scaledWidth + wrapX;
-					const y = ty * scaledHeight + wrapY;
+					const x = tx * scaledWidth + wrapX - halfW;
+					const y = ty * scaledHeight + wrapY - halfH;
 					ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
 				}
 			}
 		} else {
-			// No offset - draw single centered image
-			const centerX = (width - scaledWidth) / 2;
-			const centerY = (height - scaledHeight) / 2;
-			ctx.drawImage(img, centerX, centerY, scaledWidth, scaledHeight);
+			// No offset - draw single centered image (relative to center)
+			ctx.drawImage(img, -scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
 		}
 
 		ctx.restore();
