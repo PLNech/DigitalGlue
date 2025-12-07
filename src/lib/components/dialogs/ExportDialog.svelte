@@ -20,8 +20,8 @@
 	let estimatedSizeMB = $derived.by(() => {
 		const pixels = exportWidth * exportHeight;
 		if (format === 'png') {
-			// PNG is roughly 3-4 bytes per pixel (with compression)
-			return ((pixels * 3.5) / (1024 * 1024)).toFixed(1);
+			// PNG with good compression: ~2 bytes per pixel (conservative estimate)
+			return ((pixels * 2) / (1024 * 1024)).toFixed(1);
 		} else {
 			// JPEG depends on quality
 			const bytesPerPixel = (quality / 100) * 0.5 + 0.1;

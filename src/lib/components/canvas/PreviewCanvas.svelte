@@ -223,7 +223,9 @@
 				source1Data.height
 			);
 
-			const maskData = canvasToImageData(transformedMaskCanvas);
+			// Convert to ImageData and apply threshold
+			let maskData = canvasToImageData(transformedMaskCanvas);
+			maskData = applyThreshold(maskData, maskConfig.threshold);
 
 			// Composite the images using the mask
 			console.log('[PreviewCanvas] Compositing with mask:', {
@@ -345,6 +347,27 @@
 	function canvasToImageData(canvas: HTMLCanvasElement): ImageData {
 		const ctx = canvas.getContext('2d')!;
 		return ctx.getImageData(0, 0, canvas.width, canvas.height);
+	}
+
+	function applyThreshold(imageData: ImageData, threshold: number): ImageData {
+		const result = new ImageData(imageData.width, imageData.height);
+		const data = imageData.data;
+		const resultData = result.data;
+
+		for (let i = 0; i < data.length; i += 4) {
+			// Use R channel as grayscale value
+			const gray = data[i];
+			// Apply threshold: < threshold → black (0), >= threshold → white (255)
+			const thresholded = gray >= threshold ? 255 : 0;
+
+			resultData[i] = thresholded;
+			resultData[i + 1] = thresholded;
+			resultData[i + 2] = thresholded;
+			resultData[i + 3] = 255;
+		}
+
+		console.log(`[PreviewCanvas] Applied threshold ${threshold} to mask`);
+		return result;
 	}
 
 	function transformMask(
