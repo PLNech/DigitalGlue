@@ -17,7 +17,7 @@
 	let exportHeight = $derived(Math.round(imageData.height * scale));
 
 	// Estimate file size (rough approximation)
-	let estimatedSizeMB = $derived(() => {
+	let estimatedSizeMB = $derived.by(() => {
 		const pixels = exportWidth * exportHeight;
 		if (format === 'png') {
 			// PNG is roughly 3-4 bytes per pixel (with compression)
