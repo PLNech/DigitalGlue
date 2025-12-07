@@ -227,6 +227,15 @@
 			let maskData = canvasToImageData(transformedMaskCanvas);
 			maskData = applyThreshold(maskData, maskConfig.threshold);
 
+			// Apply edge effects if enabled
+			if ($projectState.effect.mode !== 'none') {
+				const { applyEdgeEffect } = await import('$lib/core/edge-effects');
+				maskData = applyEdgeEffect(maskData, {
+					type: $projectState.effect.mode,
+					intensity: $projectState.effect.intensity
+				});
+			}
+
 			// Composite the images using the mask
 			console.log('[PreviewCanvas] Compositing with mask:', {
 				type: maskConfig.type,
