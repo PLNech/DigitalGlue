@@ -9,8 +9,8 @@ export async function loadDefaultImages(): Promise<{
 }> {
 	try {
 		// Fetch sample images from public directory
-		const sample1 = await fetch('/samples/140-pana_med_hr.jpeg');
-		const sample2 = await fetch('/samples/144-tuni_med_hr.jpeg');
+		const sample1 = await fetch('/samples/sources/casey-horner-RmoWqDCqN2E-unsplash.jpg');
+		const sample2 = await fetch('/samples/sources/ameenfahmy-8qv3lqjrj3g-unsplash.jpg');
 
 		if (!sample1.ok || !sample2.ok) {
 			console.warn('[Default Images] Could not load sample images');

@@ -154,8 +154,8 @@
 			console.log('[PreviewCanvas] Target dimensions:', { targetWidth, targetHeight });
 
 			// Resize and convert images to ImageData
-			const source1Data = imageToImageData(img1, targetWidth, targetHeight);
-			const source2Data = imageToImageData(img2, targetWidth, targetHeight);
+			const source1Data = imageToImageData(img1, targetWidth, targetHeight, source1Config);
+			const source2Data = imageToImageData(img2, targetWidth, targetHeight, source2Config);
 
 			console.log('[PreviewCanvas] ImageData created:', {
 				source1: { width: source1Data.width, height: source1Data.height },
@@ -214,7 +214,7 @@
 		}
 	}
 
-	function imageToImageData(img: HTMLImageElement, targetWidth?: number, targetHeight?: number): ImageData {
+	function imageToImageData(img: HTMLImageElement, targetWidth?: number, targetHeight?: number, sourceConfig?: any): ImageData {
 		const canvas = document.createElement('canvas');
 		const width = targetWidth || img.width;
 		const height = targetHeight || img.height;
@@ -226,14 +226,29 @@
 		ctx.fillStyle = '#000000';
 		ctx.fillRect(0, 0, width, height);
 
-		// Draw image centered (maintain aspect ratio)
-		const scale = Math.min(width / img.width, height / img.height);
-		const scaledWidth = img.width * scale;
-		const scaledHeight = img.height * scale;
-		const x = (width - scaledWidth) / 2;
-		const y = (height - scaledHeight) / 2;
+		// Save context for transforms
+		ctx.save();
 
-		ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+		// Move to center for transforms
+		ctx.translate(width / 2, height / 2);
+
+		// Apply user-defined scale (default 100%)
+		const userScale = sourceConfig ? sourceConfig.scale / 100 : 1;
+
+		// Apply position offsets (as percentage of canvas size)
+		const offsetX = sourceConfig ? (sourceConfig.positionX / 100) * width : 0;
+		const offsetY = sourceConfig ? (sourceConfig.positionY / 100) * height : 0;
+		ctx.translate(offsetX, offsetY);
+
+		// Draw image centered (maintain aspect ratio)
+		const fitScale = Math.min(width / img.width, height / img.height);
+		const combinedScale = fitScale * userScale;
+		const scaledWidth = img.width * combinedScale;
+		const scaledHeight = img.height * combinedScale;
+
+		ctx.drawImage(img, -scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
+
+		ctx.restore();
 		return ctx.getImageData(0, 0, width, height);
 	}
 
@@ -384,7 +399,7 @@
 	{/if}
 
 	{#if $uiState.isProcessing}
-		<div class="processing-indicator">
+		<div class="processing-bar">
 			<div class="spinner"></div>
 			<span>{$uiState.statusMessage || 'Processing...'}</span>
 		</div>
@@ -426,27 +441,27 @@
 		backdrop-filter: blur(4px);
 	}
 
-	.processing-indicator {
+	.processing-bar {
 		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
+		top: 0;
+		left: 0;
+		right: 0;
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		gap: var(--spacing-sm);
-		padding: var(--spacing-lg);
-		background: rgba(0, 0, 0, 0.8);
-		border-radius: var(--radius-md);
+		padding: var(--spacing-sm) var(--spacing-md);
+		background: rgba(0, 0, 0, 0.85);
 		color: var(--color-text-primary);
 		font-size: var(--font-size-sm);
 		pointer-events: none;
+		backdrop-filter: blur(8px);
+		z-index: 10;
 	}
 
 	.spinner {
-		width: 24px;
-		height: 24px;
-		border: 3px solid var(--color-bg-tertiary);
+		width: 16px;
+		height: 16px;
+		border: 2px solid var(--color-bg-tertiary);
 		border-top-color: var(--color-accent);
 		border-radius: 50%;
 		animation: spin 0.8s linear infinite;

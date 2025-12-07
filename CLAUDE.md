@@ -85,3 +85,4 @@ Format: `[TDD] Feature name`
 - Proper error handling for async ops
 - Debug logs: `[ComponentName]` prefix
 - Web Workers for heavy compute
+- commit early and often, have good git practices

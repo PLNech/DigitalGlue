@@ -35,3 +35,9 @@ coverage/
 # Package manager locks (keep package-lock.json)
 yarn.lock
 pnpm-lock.yaml
+
+# Sample images (exclude all except casey and ameenfa)
+static/samples/sources/*
+!static/samples/sources/casey-horner-RmoWqDCqN2E-unsplash.jpg
+!static/samples/sources/ameenfahmy-8qv3lqjrj3g-unsplash.jpg
+static/samples/collages/

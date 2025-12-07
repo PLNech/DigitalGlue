@@ -37,6 +37,9 @@ describe('projectState', () => {
 			height: 800,
 			rotation: 0,
 			brightness: 0,
+			scale: 100,
+			positionX: 0,
+			positionY: 0,
 			contrast: 0,
 			saturation: 0,
 		invertColors: false
@@ -118,6 +121,9 @@ describe('projectState', () => {
 			height: 800,
 			rotation: 0,
 			brightness: 0,
+			scale: 100,
+			positionX: 0,
+			positionY: 0,
 			contrast: 0,
 			saturation: 0,
 		invertColors: false

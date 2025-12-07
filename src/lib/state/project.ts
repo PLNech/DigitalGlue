@@ -6,6 +6,9 @@ export interface SourceConfig {
 	fileName: string;
 	width: number;
 	height: number;
+	scale: number; // 10-500 (percent)
+	positionX: number; // -100 to 100 (percent)
+	positionY: number; // -100 to 100 (percent)
 	rotation: number; // degrees
 	brightness: number; // -100 to 100
 	contrast: number; // -100 to 100

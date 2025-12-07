@@ -19,11 +19,14 @@
 			const dims1 = await getImageDimensions(image1);
 			projectState.setSource1({
 				imageData: image1,
-				fileName: '140-pana_med_hr.jpeg',
+				fileName: 'casey-horner-RmoWqDCqN2E-unsplash.jpg',
 				width: dims1.width,
 				height: dims1.height,
 				rotation: 0,
 				brightness: 0,
+			scale: 100,
+			positionX: 0,
+			positionY: 0,
 				contrast: 0,
 				saturation: 0,
 				invertColors: false
@@ -35,11 +38,14 @@
 			const dims2 = await getImageDimensions(image2);
 			projectState.setSource2({
 				imageData: image2,
-				fileName: '144-tuni_med_hr.jpeg',
+				fileName: 'ameenfahmy-8qv3lqjrj3g-unsplash.jpg',
 				width: dims2.width,
 				height: dims2.height,
 				rotation: 0,
 				brightness: 0,
+			scale: 100,
+			positionX: 0,
+			positionY: 0,
 				contrast: 0,
 				saturation: 0,
 				invertColors: false

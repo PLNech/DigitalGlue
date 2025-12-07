@@ -8,7 +8,7 @@
 
 	function updateAdjustment(
 		target: AdjustmentTarget,
-		key: 'rotation' | 'brightness' | 'contrast' | 'saturation' | 'invertColors',
+		key: 'scale' | 'positionX' | 'positionY' | 'rotation' | 'brightness' | 'contrast' | 'saturation' | 'invertColors',
 		value: number | boolean
 	) {
 		if (target === 'source1') {
@@ -19,7 +19,7 @@
 	}
 
 	function resetAdjustments(target: AdjustmentTarget) {
-		const defaults = { rotation: 0, brightness: 0, contrast: 0, saturation: 0 };
+		const defaults = { scale: 100, positionX: 0, positionY: 0, rotation: 0, brightness: 0, contrast: 0, saturation: 0 };
 		if (target === 'source1') {
 			projectState.updateSource1(defaults);
 		} else {
@@ -77,6 +77,57 @@
 
 		{#if currentSource}
 			<div class="adjustments">
+				<!-- Scale -->
+				<div class="control-row">
+					<label class="control-label">
+						<span>Scale</span>
+						<span class="control-value">{currentSource.scale}%</span>
+					</label>
+					<input
+						type="range"
+						min="10"
+						max="500"
+						value={currentSource.scale}
+						oninput={(e) =>
+							updateAdjustment(activeTarget, 'scale', parseInt(e.currentTarget.value))}
+						class="slider"
+					/>
+				</div>
+
+				<!-- Position X -->
+				<div class="control-row">
+					<label class="control-label">
+						<span>Position X</span>
+						<span class="control-value">{currentSource.positionX}%</span>
+					</label>
+					<input
+						type="range"
+						min="-100"
+						max="100"
+						value={currentSource.positionX}
+						oninput={(e) =>
+							updateAdjustment(activeTarget, 'positionX', parseInt(e.currentTarget.value))}
+						class="slider"
+					/>
+				</div>
+
+				<!-- Position Y -->
+				<div class="control-row">
+					<label class="control-label">
+						<span>Position Y</span>
+						<span class="control-value">{currentSource.positionY}%</span>
+					</label>
+					<input
+						type="range"
+						min="-100"
+						max="100"
+						value={currentSource.positionY}
+						oninput={(e) =>
+							updateAdjustment(activeTarget, 'positionY', parseInt(e.currentTarget.value))}
+						class="slider"
+					/>
+				</div>
+
 				<!-- Rotation -->
 				<div class="control-row">
 					<label class="control-label">
