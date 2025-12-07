@@ -186,12 +186,13 @@
 			let maskCanvas: HTMLCanvasElement | null = null;
 
 			if (maskConfig.type === 'pattern') {
-				// Generate pattern mask
+				// Generate pattern mask (with scale for density on infinite patterns)
 				const patternId = maskConfig.patternId || 'half-vertical';
 				maskCanvas = generatePatternMask(
 					patternId as any,
 					source1Data.width,
-					source1Data.height
+					source1Data.height,
+					maskConfig.scale
 				);
 			} else if (maskConfig.type === 'drawn' && maskConfig.drawnData) {
 				// Load drawn mask
@@ -201,7 +202,7 @@
 				maskCanvas = await loadMaskImage(maskConfig.imageData, source1Data.width, source1Data.height);
 			} else {
 				// Fallback to default pattern
-				maskCanvas = generatePatternMask('half-vertical', source1Data.width, source1Data.height);
+				maskCanvas = generatePatternMask('half-vertical', source1Data.width, source1Data.height, maskConfig.scale);
 			}
 
 			if (!maskCanvas) {
@@ -295,44 +296,42 @@
 			}
 		}
 
-		// Move to center for transforms
-		ctx.translate(width / 2, height / 2);
-
-		// Apply user-defined scale (default 100%)
+		// Calculate scaling
 		const userScale = sourceConfig ? sourceConfig.scale / 100 : 1;
-
-		// Apply position offsets (as percentage of canvas size)
-		const offsetX = sourceConfig ? (sourceConfig.positionX / 100) * width : 0;
-		const offsetY = sourceConfig ? (sourceConfig.positionY / 100) * height : 0;
-		ctx.translate(offsetX, offsetY);
-
-		// Draw image centered (maintain aspect ratio)
 		const fitScale = Math.min(width / img.width, height / img.height);
 		const combinedScale = fitScale * userScale;
 		const scaledWidth = img.width * combinedScale;
 		const scaledHeight = img.height * combinedScale;
 
+		// Calculate position offsets (as percentage of canvas size)
+		const offsetXPx = sourceConfig ? (sourceConfig.positionX / 100) * width : 0;
+		const offsetYPx = sourceConfig ? (sourceConfig.positionY / 100) * height : 0;
+
 		// If position offset is used, tile the image for wrap/rollover effect
 		if (sourceConfig && (sourceConfig.positionX !== 0 || sourceConfig.positionY !== 0)) {
-			// Calculate how many tiles we need to fill the canvas
-			const tilesX = Math.ceil(width / scaledWidth) + 2;
-			const tilesY = Math.ceil(height / scaledHeight) + 2;
+			// Wrap offset within scaled image bounds
+			const wrapX = ((offsetXPx % scaledWidth) + scaledWidth) % scaledWidth;
+			const wrapY = ((offsetYPx % scaledHeight) + scaledHeight) % scaledHeight;
 
-			// Wrap offset within image bounds
-			const wrapOffsetX = ((offsetX % scaledWidth) + scaledWidth) % scaledWidth;
-			const wrapOffsetY = ((offsetY % scaledHeight) + scaledHeight) % scaledHeight;
+			// Calculate how many tiles needed to cover canvas
+			const startX = Math.floor(-wrapX / scaledWidth) - 1;
+			const endX = Math.ceil((width - wrapX) / scaledWidth) + 1;
+			const startY = Math.floor(-wrapY / scaledHeight) - 1;
+			const endY = Math.ceil((height - wrapY) / scaledHeight) + 1;
 
 			// Draw tiled pattern
-			for (let ty = -1; ty < tilesY; ty++) {
-				for (let tx = -1; tx < tilesX; tx++) {
-					const x = tx * scaledWidth + wrapOffsetX - scaledWidth / 2;
-					const y = ty * scaledHeight + wrapOffsetY - scaledHeight / 2;
+			for (let ty = startY; ty <= endY; ty++) {
+				for (let tx = startX; tx <= endX; tx++) {
+					const x = tx * scaledWidth + wrapX;
+					const y = ty * scaledHeight + wrapY;
 					ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
 				}
 			}
 		} else {
 			// No offset - draw single centered image
-			ctx.drawImage(img, -scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
+			const centerX = (width - scaledWidth) / 2;
+			const centerY = (height - scaledHeight) / 2;
+			ctx.drawImage(img, centerX, centerY, scaledWidth, scaledHeight);
 		}
 
 		ctx.restore();

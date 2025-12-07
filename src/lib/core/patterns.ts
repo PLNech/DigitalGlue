@@ -17,7 +17,8 @@ export interface PatternConfig {
 	id: PatternId;
 	name: string;
 	preview: string;
-	generate: (width: number, height: number) => HTMLCanvasElement;
+	isInfinite?: boolean; // True for tiling patterns (stripes, checkerboard)
+	generate: (width: number, height: number, scale?: number) => HTMLCanvasElement;
 }
 
 /**
@@ -149,11 +150,16 @@ export const patterns: Record<PatternId, PatternConfig> = {
 		id: 'stripes-v',
 		name: 'Vertical Stripes',
 		preview: '║',
-		generate: (width, height) => {
+		isInfinite: true,
+		generate: (width, height, scale = 100) => {
 			const canvas = createMaskCanvas(width, height);
 			const ctx = canvas.getContext('2d')!;
 
-			const stripeCount = 8;
+			// Base stripe count at 100% scale
+			const baseStripeCount = 8;
+			// Density inversely proportional to scale (50% scale = 2x density)
+			const densityMultiplier = 100 / scale;
+			const stripeCount = Math.max(2, Math.round(baseStripeCount * densityMultiplier));
 			const stripeWidth = width / stripeCount;
 
 			for (let i = 0; i < stripeCount; i++) {
@@ -169,11 +175,16 @@ export const patterns: Record<PatternId, PatternConfig> = {
 		id: 'stripes-h',
 		name: 'Horizontal Stripes',
 		preview: '═',
-		generate: (width, height) => {
+		isInfinite: true,
+		generate: (width, height, scale = 100) => {
 			const canvas = createMaskCanvas(width, height);
 			const ctx = canvas.getContext('2d')!;
 
-			const stripeCount = 8;
+			// Base stripe count at 100% scale
+			const baseStripeCount = 8;
+			// Density inversely proportional to scale (50% scale = 2x density)
+			const densityMultiplier = 100 / scale;
+			const stripeCount = Math.max(2, Math.round(baseStripeCount * densityMultiplier));
 			const stripeHeight = height / stripeCount;
 
 			for (let i = 0; i < stripeCount; i++) {
@@ -189,12 +200,17 @@ export const patterns: Record<PatternId, PatternConfig> = {
 		id: 'checkerboard',
 		name: 'Checkerboard',
 		preview: '▦',
-		generate: (width, height) => {
+		isInfinite: true,
+		generate: (width, height, scale = 100) => {
 			const canvas = createMaskCanvas(width, height);
 			const ctx = canvas.getContext('2d')!;
 
-			const rows = 8;
-			const cols = 8;
+			// Base cell count at 100% scale
+			const baseCellCount = 8;
+			// Density inversely proportional to scale (50% scale = 2x density)
+			const densityMultiplier = 100 / scale;
+			const rows = Math.max(2, Math.round(baseCellCount * densityMultiplier));
+			const cols = Math.max(2, Math.round(baseCellCount * densityMultiplier));
 			const cellWidth = width / cols;
 			const cellHeight = height / rows;
 
@@ -223,7 +239,8 @@ export function getPattern(id: PatternId): PatternConfig | undefined {
 export function generatePatternMask(
 	patternId: PatternId,
 	width: number,
-	height: number
+	height: number,
+	scale = 100
 ): HTMLCanvasElement | null {
 	const pattern = getPattern(patternId);
 	if (!pattern) {
@@ -231,6 +248,6 @@ export function generatePatternMask(
 		return null;
 	}
 
-	console.log(`[Patterns] Generating ${patternId} mask at ${width}x${height}`);
-	return pattern.generate(width, height);
+	console.log(`[Patterns] Generating ${patternId} mask at ${width}x${height}, scale=${scale}%`);
+	return pattern.generate(width, height, scale);
 }
