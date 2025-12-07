@@ -3,8 +3,7 @@
 	import { browser } from '$app/environment';
 	import { projectState } from '$state/project';
 	import { uiState } from '$state/ui';
-	import { exportTrigger } from '$state/export-trigger';
-	import { exportImage, getDefaultExportFilename } from '$lib/io/export';
+	import ExportDialog from '../dialogs/ExportDialog.svelte';
 
 	let containerDiv: HTMLDivElement;
 	let Konva: typeof import('konva').default | null = null;
@@ -210,10 +209,15 @@
 				return;
 			}
 
-			// Apply scale and rotation transforms to mask
+			// Apply transforms to mask
+			// For infinite patterns (stripes/checkerboard), only apply rotation (scale already in density)
+			// For finite patterns (shapes), apply both scale and rotation
+			const isInfinitePattern = maskConfig.type === 'pattern' &&
+				['stripes-v', 'stripes-h', 'checkerboard'].includes(maskConfig.patternId || '');
+
 			const transformedMaskCanvas = transformMask(
 				maskCanvas,
-				maskConfig.scale,
+				isInfinitePattern ? 100 : maskConfig.scale, // Infinite: no scale transform, finite: apply scale
 				maskConfig.rotation,
 				source1Data.width,
 				source1Data.height
@@ -498,28 +502,6 @@
 		}
 	});
 
-	// Handle export requests
-	$effect(() => {
-		const exportRequest = $exportTrigger;
-		if (exportRequest && currentComposite) {
-			console.log('[PreviewCanvas] Export requested, scale:', exportRequest.scale);
-
-			const filename = getDefaultExportFilename();
-			exportImage(currentComposite, filename, { scale: exportRequest.scale })
-				.then(() => {
-					console.log('[PreviewCanvas] Export complete:', filename);
-					exportTrigger.clear();
-				})
-				.catch((err) => {
-					console.error('[PreviewCanvas] Export failed:', err);
-					alert(`Export failed: ${err.message}`);
-					exportTrigger.clear();
-				});
-		} else if (exportRequest && !currentComposite) {
-			alert('No composite available to export. Load images first.');
-			exportTrigger.clear();
-		}
-	});
 </script>
 
 <div class="preview-wrapper">
@@ -538,6 +520,11 @@
 		</div>
 	{/if}
 </div>
+
+<!-- Export Dialog -->
+{#if $uiState.showExportDialog && currentComposite}
+	<ExportDialog imageData={currentComposite} onClose={() => uiState.hideExport()} />
+{/if}
 
 <style>
 	.preview-wrapper {

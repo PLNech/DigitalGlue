@@ -12,6 +12,7 @@ export interface UIStateData {
 	showGrid: boolean;
 	isProcessing: boolean;
 	statusMessage: string | null;
+	showExportDialog: boolean;
 }
 
 const defaultUIState: UIStateData = {
@@ -22,7 +23,8 @@ const defaultUIState: UIStateData = {
 	expandedPanels: new Set(['source', 'mask', 'effects', 'adjustments']),
 	showGrid: true,
 	isProcessing: false,
-	statusMessage: null
+	statusMessage: null,
+	showExportDialog: false
 };
 
 function createUIStore() {
@@ -105,6 +107,15 @@ function createUIStore() {
 		// Status message
 		setStatus(message: string | null) {
 			update((state) => ({ ...state, statusMessage: message }));
+		},
+
+		// Export dialog
+		showExport() {
+			update((state) => ({ ...state, showExportDialog: true }));
+		},
+
+		hideExport() {
+			update((state) => ({ ...state, showExportDialog: false }));
 		},
 
 		// Reset
