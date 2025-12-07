@@ -8,6 +8,7 @@
 
 	import { historyStore } from '$state/history';
 	import { projectState } from '$state/project';
+	import { exportComposite } from '$state/export-trigger';
 
 	function handleNew() {
 		if (confirm('Start a new project? Current work will be lost.')) {
@@ -53,7 +54,7 @@
 				{ label: 'Save', shortcut: 'Ctrl+S', action: () => alert('Save: Coming soon!') },
 				{ label: 'Save As...', shortcut: 'Ctrl+Shift+S', action: () => alert('Save As: Coming soon!') },
 				{ separator: true, label: '' },
-				{ label: 'Export PNG...', shortcut: 'Ctrl+E', action: () => alert('Export: Coming soon!') }
+				{ label: 'Export PNG...', shortcut: 'Ctrl+E', action: () => exportComposite() }
 			]
 		},
 		{

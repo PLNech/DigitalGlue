@@ -3,12 +3,17 @@
 	import { browser } from '$app/environment';
 	import { projectState } from '$state/project';
 	import { uiState } from '$state/ui';
+	import { exportTrigger } from '$state/export-trigger';
+	import { exportImage, getDefaultExportFilename } from '$lib/io/export';
 
 	let containerDiv: HTMLDivElement;
 	let Konva: typeof import('konva').default | null = null;
 	let stage: any = null;
 	let layer: any = null;
 	let compositeImage: any = null;
+
+	// Store current composite for export
+	let currentComposite: ImageData | null = null;
 
 	// Worker for off-main-thread processing
 	let worker: Worker | null = null;
@@ -228,6 +233,9 @@
 			const composited = compositeImages(source1Data, source2Data, maskData, {
 				invertMask: maskConfig.invert
 			});
+
+			// Store for export
+			currentComposite = composited;
 
 			// Display the result
 			displayComposite(composited);
@@ -488,6 +496,29 @@
 		if (stage && layer && Konva) {
 			console.log('[PreviewCanvas] State changed, debouncing update...');
 			debouncedUpdateCanvas();
+		}
+	});
+
+	// Handle export requests
+	$effect(() => {
+		const exportRequest = $exportTrigger;
+		if (exportRequest && currentComposite) {
+			console.log('[PreviewCanvas] Export requested, scale:', exportRequest.scale);
+
+			const filename = getDefaultExportFilename();
+			exportImage(currentComposite, filename, { scale: exportRequest.scale })
+				.then(() => {
+					console.log('[PreviewCanvas] Export complete:', filename);
+					exportTrigger.clear();
+				})
+				.catch((err) => {
+					console.error('[PreviewCanvas] Export failed:', err);
+					alert(`Export failed: ${err.message}`);
+					exportTrigger.clear();
+				});
+		} else if (exportRequest && !currentComposite) {
+			alert('No composite available to export. Load images first.');
+			exportTrigger.clear();
 		}
 	});
 </script>
