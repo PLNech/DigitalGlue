@@ -2,6 +2,7 @@
 	import { projectState } from '$state/project';
 	import { historyStore } from '$state/history';
 	import Panel from './Panel.svelte';
+	import MaskEditor from './MaskEditor.svelte';
 
 	type MaskTab = 'upload' | 'patterns' | 'draw';
 	let activeTab = $state<MaskTab>('patterns');
@@ -151,19 +152,7 @@
 				{/each}
 			</div>
 		{:else if activeTab === 'draw'}
-			<div class="draw-section">
-				<p class="placeholder-text">
-					Mask drawing tools coming soon!
-				</p>
-				<div class="draw-tools-preview">
-					<span title="Brush">🖌️</span>
-					<span title="Eraser">🧹</span>
-					<span title="Line">📏</span>
-					<span title="Rectangle">▢</span>
-					<span title="Ellipse">○</span>
-					<span title="Fill">🪣</span>
-				</div>
-			</div>
+			<MaskEditor />
 		{/if}
 	</div>
 

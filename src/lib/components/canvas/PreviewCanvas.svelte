@@ -123,12 +123,22 @@
 	async function updateCanvas() {
 		if (!stage || !layer || !Konva) return;
 
-		console.log('[PreviewCanvas] Updating canvas');
+		const perfStart = performance.now();
+		console.log('[PreviewCanvas] === COMPOSITING START ===');
+		console.log('[PreviewCanvas] Input:', {
+			source1: $projectState.sources.source1?.fileName,
+			source2: $projectState.sources.source2?.fileName,
+			maskType: $projectState.mask.type,
+			maskPattern: $projectState.mask.patternId,
+			maskScale: $projectState.mask.scale,
+			maskRotation: $projectState.mask.rotation
+		});
 
-		layer.destroyChildren();
-		compositeImage = null;
-
-		if (!$projectState.sources.source1) return;
+		if (!$projectState.sources.source1) {
+			layer.destroyChildren();
+			compositeImage = null;
+			return;
+		}
 
 		uiState.setProcessing(true, 'Compositing images...');
 
@@ -138,8 +148,10 @@
 			const maskConfig = $projectState.mask;
 
 			// Load images
+			const t0 = performance.now();
 			const img1 = await loadImage(source1Config.imageData);
 			const img2 = await loadImage(source2Config.imageData);
+			console.log(`[PreviewCanvas] ⏱️ Image loading: ${(performance.now() - t0).toFixed(1)}ms`);
 
 			console.log('[PreviewCanvas] Images loaded:', {
 				source1: { width: img1.width, height: img1.height },
@@ -348,7 +360,9 @@
 			height: imageData.height
 		});
 
+		// Clear old content only right before displaying new composite
 		layer.destroyChildren();
+		compositeImage = null;
 
 		// Convert ImageData to canvas
 		const canvas = document.createElement('canvas');
@@ -378,13 +392,22 @@
 		console.log('[PreviewCanvas] Composite displayed on stage');
 	}
 
+	// Debounced canvas update for smooth slider interaction
+	let updateTimeout: ReturnType<typeof setTimeout> | null = null;
+	function debouncedUpdateCanvas() {
+		if (updateTimeout) clearTimeout(updateTimeout);
+		updateTimeout = setTimeout(() => {
+			updateCanvas();
+		}, 150); // 150ms debounce for smooth slider movement
+	}
+
 	// React to state changes
 	$effect(() => {
 		if (!browser) return;
 		const state = $projectState;
 		if (stage && layer && Konva) {
-			console.log('[PreviewCanvas] State changed, updating...');
-			updateCanvas();
+			console.log('[PreviewCanvas] State changed, debouncing update...');
+			debouncedUpdateCanvas();
 		}
 	});
 </script>
