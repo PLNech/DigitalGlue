@@ -5,14 +5,17 @@
 	import MaskPanel from '$components/panels/MaskPanel.svelte';
 	import EffectsPanel from '$components/panels/EffectsPanel.svelte';
 	import AdjustmentsPanel from '$components/panels/AdjustmentsPanel.svelte';
+	import PreviewCanvas from '$components/canvas/PreviewCanvas.svelte';
 
-	let canvasContainer: HTMLDivElement;
-
-	// Placeholder for Konva stage - will be implemented in Phase 2
+	// Debug logging
 	$effect(() => {
-		if (canvasContainer) {
-			// Konva initialization will go here
-		}
+		console.log('[Workspace] State update:', {
+			hasSource1: !!$projectState.sources.source1,
+			hasSource2: !!$projectState.sources.source2,
+			maskType: $projectState.mask.type,
+			maskPatternId: $projectState.mask.patternId,
+			effectMode: $projectState.effect.mode
+		});
 	});
 </script>
 
@@ -25,21 +28,15 @@
 
 	<!-- Canvas Area -->
 	<div class="canvas-area">
-		<div class="canvas-container" bind:this={canvasContainer}>
+		<div class="canvas-container">
 			{#if !$projectState.sources.source1}
 				<div class="empty-state">
 					<div class="empty-icon">📷</div>
 					<h2>Welcome to DigitalGlue</h2>
 					<p>Load source images to begin creating your collage</p>
-					<button class="primary-button" onclick={() => console.log('Load')}>
-						Load Source Image
-					</button>
 				</div>
 			{:else}
-				<!-- Konva canvas will render here -->
-				<div class="canvas-placeholder">
-					Canvas Preview
-				</div>
+				<PreviewCanvas />
 			{/if}
 		</div>
 	</div>

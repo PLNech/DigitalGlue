@@ -19,6 +19,7 @@
 	];
 
 	function selectPattern(patternId: string) {
+		console.log('[MaskPanel] Pattern selected:', patternId);
 		projectState.updateMask({
 			type: 'pattern',
 			patternId

@@ -11,6 +11,8 @@
 		const input = event.target as HTMLInputElement;
 		const file = input.files?.[0];
 
+		console.log(`[SourcePanel] File selected for source${sourceNum}:`, file?.name);
+
 		if (!file) return;
 
 		// Validate file type
@@ -23,7 +25,10 @@
 
 		try {
 			const imageData = await fileToDataURL(file);
+			console.log(`[SourcePanel] Image data URL created, length: ${imageData.length}`);
+
 			const dimensions = await getImageDimensions(imageData);
+			console.log(`[SourcePanel] Image dimensions: ${dimensions.width}x${dimensions.height}`);
 
 			const sourceConfig = {
 				imageData,
@@ -37,14 +42,17 @@
 			};
 
 			if (sourceNum === 1) {
+				console.log('[SourcePanel] Setting source 1');
 				projectState.setSource1(sourceConfig);
 			} else {
+				console.log('[SourcePanel] Setting source 2');
 				projectState.setSource2(sourceConfig);
 			}
 
 			historyStore.snapshot(`Load ${sourceNum === 1 ? 'Source 1' : 'Source 2'}`);
+			console.log(`[SourcePanel] Source ${sourceNum} loaded successfully`);
 		} catch (error) {
-			console.error('Failed to load image:', error);
+			console.error('[SourcePanel] Failed to load image:', error);
 			alert('Failed to load image');
 		} finally {
 			uiState.setProcessing(false);
