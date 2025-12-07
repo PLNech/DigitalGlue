@@ -232,7 +232,7 @@
 		const height = targetHeight || img.height;
 		canvas.width = width;
 		canvas.height = height;
-		const ctx = canvas.getContext('2d')!;
+		const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
 
 		// Fill with black background first
 		ctx.fillStyle = '#000000';
@@ -240,6 +240,38 @@
 
 		// Save context for transforms
 		ctx.save();
+
+		// Apply canvas filters for adjustments
+		if (sourceConfig) {
+			const filters: string[] = [];
+
+			// Brightness: -100 to 100 -> 0 to 200%
+			if (sourceConfig.brightness !== 0) {
+				const bright = 100 + sourceConfig.brightness; // -100 to 100 -> 0 to 200
+				filters.push(`brightness(${bright}%)`);
+			}
+
+			// Contrast: -100 to 100 -> 0 to 200%
+			if (sourceConfig.contrast !== 0) {
+				const contrast = 100 + sourceConfig.contrast;
+				filters.push(`contrast(${contrast}%)`);
+			}
+
+			// Saturation: -100 to 100 -> 0 to 200%
+			if (sourceConfig.saturation !== 0) {
+				const sat = 100 + sourceConfig.saturation;
+				filters.push(`saturate(${sat}%)`);
+			}
+
+			// Invert colors
+			if (sourceConfig.invertColors) {
+				filters.push('invert(100%)');
+			}
+
+			if (filters.length > 0) {
+				ctx.filter = filters.join(' ');
+			}
+		}
 
 		// Move to center for transforms
 		ctx.translate(width / 2, height / 2);
@@ -258,7 +290,28 @@
 		const scaledWidth = img.width * combinedScale;
 		const scaledHeight = img.height * combinedScale;
 
-		ctx.drawImage(img, -scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
+		// If position offset is used, tile the image for wrap/rollover effect
+		if (sourceConfig && (sourceConfig.positionX !== 0 || sourceConfig.positionY !== 0)) {
+			// Calculate how many tiles we need to fill the canvas
+			const tilesX = Math.ceil(width / scaledWidth) + 2;
+			const tilesY = Math.ceil(height / scaledHeight) + 2;
+
+			// Wrap offset within image bounds
+			const wrapOffsetX = ((offsetX % scaledWidth) + scaledWidth) % scaledWidth;
+			const wrapOffsetY = ((offsetY % scaledHeight) + scaledHeight) % scaledHeight;
+
+			// Draw tiled pattern
+			for (let ty = -1; ty < tilesY; ty++) {
+				for (let tx = -1; tx < tilesX; tx++) {
+					const x = tx * scaledWidth + wrapOffsetX - scaledWidth / 2;
+					const y = ty * scaledHeight + wrapOffsetY - scaledHeight / 2;
+					ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+				}
+			}
+		} else {
+			// No offset - draw single centered image
+			ctx.drawImage(img, -scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
+		}
 
 		ctx.restore();
 		return ctx.getImageData(0, 0, width, height);
