@@ -6,41 +6,78 @@
 		items: { label: string; shortcut?: string; action?: () => void; separator?: boolean }[];
 	};
 
+	import { historyStore } from '$state/history';
+	import { projectState } from '$state/project';
+
+	function handleNew() {
+		if (confirm('Start a new project? Current work will be lost.')) {
+			projectState.reset();
+			historyStore.clear();
+			historyStore.initialize();
+			uiState.resetZoom();
+		}
+	}
+
+	function handleUndo() {
+		historyStore.undo();
+	}
+
+	function handleRedo() {
+		historyStore.redo();
+	}
+
+	function handleResetView() {
+		uiState.resetZoom();
+	}
+
+	function handleZoomIn() {
+		uiState.zoomIn();
+	}
+
+	function handleZoomOut() {
+		uiState.zoomOut();
+	}
+
+	function handleFitToWindow() {
+		uiState.setZoom(1);
+		uiState.setPan(0, 0);
+	}
+
 	const menus: MenuItem[] = [
 		{
 			label: 'File',
 			items: [
-				{ label: 'New Project', shortcut: 'Ctrl+N', action: () => console.log('New') },
-				{ label: 'Open...', shortcut: 'Ctrl+O', action: () => console.log('Open') },
+				{ label: 'New Project', shortcut: 'Ctrl+N', action: handleNew },
+				{ label: 'Open...', shortcut: 'Ctrl+O', action: () => alert('Open: Coming soon!') },
 				{ separator: true, label: '' },
-				{ label: 'Save', shortcut: 'Ctrl+S', action: () => console.log('Save') },
-				{ label: 'Save As...', shortcut: 'Ctrl+Shift+S', action: () => console.log('SaveAs') },
+				{ label: 'Save', shortcut: 'Ctrl+S', action: () => alert('Save: Coming soon!') },
+				{ label: 'Save As...', shortcut: 'Ctrl+Shift+S', action: () => alert('Save As: Coming soon!') },
 				{ separator: true, label: '' },
-				{ label: 'Export PNG...', shortcut: 'Ctrl+E', action: () => console.log('Export') }
+				{ label: 'Export PNG...', shortcut: 'Ctrl+E', action: () => alert('Export: Coming soon!') }
 			]
 		},
 		{
 			label: 'Edit',
 			items: [
-				{ label: 'Undo', shortcut: 'Ctrl+Z', action: () => console.log('Undo') },
-				{ label: 'Redo', shortcut: 'Ctrl+Y', action: () => console.log('Redo') },
+				{ label: 'Undo', shortcut: 'Ctrl+Z', action: handleUndo },
+				{ label: 'Redo', shortcut: 'Ctrl+Y', action: handleRedo },
 				{ separator: true, label: '' },
-				{ label: 'Reset View', shortcut: 'Ctrl+0', action: () => console.log('ResetView') }
+				{ label: 'Reset View', shortcut: 'Ctrl+0', action: handleResetView }
 			]
 		},
 		{
 			label: 'View',
 			items: [
-				{ label: 'Zoom In', shortcut: 'Ctrl++', action: () => console.log('ZoomIn') },
-				{ label: 'Zoom Out', shortcut: 'Ctrl+-', action: () => console.log('ZoomOut') },
-				{ label: 'Fit to Window', shortcut: 'Ctrl+1', action: () => console.log('Fit') }
+				{ label: 'Zoom In', shortcut: 'Ctrl++', action: handleZoomIn },
+				{ label: 'Zoom Out', shortcut: 'Ctrl+-', action: handleZoomOut },
+				{ label: 'Fit to Window', shortcut: 'Ctrl+1', action: handleFitToWindow }
 			]
 		},
 		{
 			label: 'Help',
 			items: [
-				{ label: 'About DigitalGlue', action: () => console.log('About') },
-				{ label: 'Keyboard Shortcuts', shortcut: '?', action: () => console.log('Shortcuts') }
+				{ label: 'About DigitalGlue', action: () => alert('DigitalGlue v0.1.0\nPhoto Collage Editor\nMIT License © 2025') },
+				{ label: 'Keyboard Shortcuts', shortcut: '?', action: () => alert('Keyboard Shortcuts:\n\n• Drag canvas: Pan\n• Scroll: Zoom\n• Ctrl+Z: Undo\n• Ctrl+Y: Redo\n• Ctrl+0: Reset View') }
 			]
 		}
 	];

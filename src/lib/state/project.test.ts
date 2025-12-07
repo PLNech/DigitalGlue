@@ -38,7 +38,8 @@ describe('projectState', () => {
 			rotation: 0,
 			brightness: 0,
 			contrast: 0,
-			saturation: 0
+			saturation: 0,
+		invertColors: false
 		};
 
 		it('should set source1', () => {
@@ -118,7 +119,8 @@ describe('projectState', () => {
 			rotation: 0,
 			brightness: 0,
 			contrast: 0,
-			saturation: 0
+			saturation: 0,
+		invertColors: false
 		};
 
 		it('hasSource1 should reflect state', () => {

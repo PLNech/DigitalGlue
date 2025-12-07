@@ -10,6 +10,7 @@ export interface SourceConfig {
 	brightness: number; // -100 to 100
 	contrast: number; // -100 to 100
 	saturation: number; // -100 to 100
+	invertColors: boolean; // Invert RGB channels
 }
 
 export interface MaskConfig {

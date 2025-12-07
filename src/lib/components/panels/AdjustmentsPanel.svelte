@@ -8,8 +8,8 @@
 
 	function updateAdjustment(
 		target: AdjustmentTarget,
-		key: 'rotation' | 'brightness' | 'contrast' | 'saturation',
-		value: number
+		key: 'rotation' | 'brightness' | 'contrast' | 'saturation' | 'invertColors',
+		value: number | boolean
 	) {
 		if (target === 'source1') {
 			projectState.updateSource1({ [key]: value });
@@ -143,6 +143,19 @@
 							updateAdjustment(activeTarget, 'saturation', parseInt(e.currentTarget.value))}
 						class="slider"
 					/>
+				</div>
+
+				<!-- Invert Colors Toggle -->
+				<div class="control-row">
+					<label class="checkbox-label">
+						<input
+							type="checkbox"
+							checked={currentSource.invertColors}
+							onchange={(e) =>
+								updateAdjustment(activeTarget, 'invertColors', e.currentTarget.checked)}
+						/>
+						<span>Invert Colors</span>
+					</label>
 				</div>
 
 				<!-- Reset Button -->

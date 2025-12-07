@@ -38,7 +38,8 @@
 				rotation: 0,
 				brightness: 0,
 				contrast: 0,
-				saturation: 0
+				saturation: 0,
+				invertColors: false
 			};
 
 			if (sourceNum === 1) {
