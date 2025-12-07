@@ -1,0 +1,134 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: DigitalGlue
+      - button "File" [ref=e8] [cursor=pointer]
+      - button "Edit" [ref=e10] [cursor=pointer]
+      - button "View" [ref=e12] [cursor=pointer]
+      - button "Help" [ref=e14] [cursor=pointer]
+  - generic [ref=e15]:
+    - complementary [ref=e16]:
+      - generic "Zoom Level" [ref=e19]: 100%
+    - main [ref=e20]:
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - button "Sources −" [ref=e23] [cursor=pointer]:
+            - generic [ref=e24]: Sources
+            - generic [ref=e25]: −
+          - generic [ref=e27]:
+            - generic [ref=e28]:
+              - generic [ref=e29]:
+                - generic [ref=e30]: Source 1
+                - button "×" [ref=e31] [cursor=pointer]
+              - generic [ref=e32]:
+                - img "Source 1" [ref=e33]
+                - generic [ref=e34]:
+                  - generic [ref=e35]: 140-pana_med_hr.jpeg
+                  - generic [ref=e36]: 624 × 1216
+            - generic [ref=e37]:
+              - generic [ref=e38]:
+                - generic [ref=e39]: Source 2
+                - button "×" [ref=e40] [cursor=pointer]
+              - generic [ref=e41]:
+                - img "Source 2" [ref=e42]
+                - generic [ref=e43]:
+                  - generic [ref=e44]: 142-alg_med_hr.jpeg
+                  - generic [ref=e45]: 966 × 1216
+        - generic [ref=e46]:
+          - button "Mask −" [ref=e47] [cursor=pointer]:
+            - generic [ref=e48]: Mask
+            - generic [ref=e49]: −
+          - generic [ref=e50]:
+            - generic [ref=e51]:
+              - button "Upload" [ref=e52] [cursor=pointer]
+              - button "Patterns" [ref=e53] [cursor=pointer]
+              - button "Draw" [ref=e54] [cursor=pointer]
+            - generic [ref=e56]:
+              - button "◧ Half Vertical" [active] [ref=e57] [cursor=pointer]:
+                - generic [ref=e58]: ◧
+                - generic [ref=e59]: Half Vertical
+              - button "⬒ Half Horizontal" [ref=e60] [cursor=pointer]:
+                - generic [ref=e61]: ⬒
+                - generic [ref=e62]: Half Horizontal
+              - button "◪ Diagonal" [ref=e63] [cursor=pointer]:
+                - generic [ref=e64]: ◪
+                - generic [ref=e65]: Diagonal
+              - button "◯ Circle" [ref=e66] [cursor=pointer]:
+                - generic [ref=e67]: ◯
+                - generic [ref=e68]: Circle
+              - button "◇ Diamond" [ref=e69] [cursor=pointer]:
+                - generic [ref=e70]: ◇
+                - generic [ref=e71]: Diamond
+              - button "║ Vertical Stripes" [ref=e72] [cursor=pointer]:
+                - generic [ref=e73]: ║
+                - generic [ref=e74]: Vertical Stripes
+              - button "═ Horizontal Stripes" [ref=e75] [cursor=pointer]:
+                - generic [ref=e76]: ═
+                - generic [ref=e77]: Horizontal Stripes
+              - button "▦ Checkerboard" [ref=e78] [cursor=pointer]:
+                - generic [ref=e79]: ▦
+                - generic [ref=e80]: Checkerboard
+            - generic [ref=e82] [cursor=pointer]:
+              - checkbox "Invert Mask" [ref=e83]
+              - generic [ref=e84]: Invert Mask
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - button "Edge Effects −" [ref=e92] [cursor=pointer]:
+            - generic [ref=e93]: Edge Effects
+            - generic [ref=e94]: −
+          - generic [ref=e96]:
+            - button "▬ None" [ref=e97] [cursor=pointer]:
+              - generic [ref=e98]: ▬
+              - generic [ref=e99]: None
+            - button "🌫️ Soft Feather" [ref=e100] [cursor=pointer]:
+              - generic [ref=e101]: 🌫️
+              - generic [ref=e102]: Soft Feather
+            - button "💨 Shadow Feather" [ref=e103] [cursor=pointer]:
+              - generic [ref=e104]: 💨
+              - generic [ref=e105]: Shadow Feather
+            - button "〰️ Wavy" [ref=e106] [cursor=pointer]:
+              - generic [ref=e107]: 〰️
+              - generic [ref=e108]: Wavy
+            - button "📄 Torn Paper" [ref=e109] [cursor=pointer]:
+              - generic [ref=e110]: 📄
+              - generic [ref=e111]: Torn Paper
+            - button "🎨 Gradient Blend" [ref=e112] [cursor=pointer]:
+              - generic [ref=e113]: 🎨
+              - generic [ref=e114]: Gradient Blend
+        - generic [ref=e115]:
+          - button "Adjustments −" [ref=e116] [cursor=pointer]:
+            - generic [ref=e117]: Adjustments
+            - generic [ref=e118]: −
+          - generic [ref=e119]:
+            - generic [ref=e120]:
+              - button "Source 1" [ref=e121] [cursor=pointer]
+              - button "Source 2" [ref=e122] [cursor=pointer]
+            - generic [ref=e123]:
+              - generic [ref=e124]:
+                - generic [ref=e125]:
+                  - generic [ref=e126]: Rotation
+                  - generic [ref=e127]: 0°
+                - slider [ref=e128] [cursor=pointer]: "0"
+              - generic [ref=e129]:
+                - generic [ref=e130]:
+                  - generic [ref=e131]: Brightness
+                  - generic [ref=e132]: "0"
+                - slider [ref=e133] [cursor=pointer]: "0"
+              - generic [ref=e134]:
+                - generic [ref=e135]:
+                  - generic [ref=e136]: Contrast
+                  - generic [ref=e137]: "0"
+                - slider [ref=e138] [cursor=pointer]: "0"
+              - generic [ref=e139]:
+                - generic [ref=e140]:
+                  - generic [ref=e141]: Saturation
+                  - generic [ref=e142]: "0"
+                - slider [ref=e143] [cursor=pointer]: "0"
+              - generic [ref=e145]:
+                - checkbox "Invert Colors" [ref=e146]
+                - text: Invert Colors
+              - button "Reset Adjustments" [ref=e147] [cursor=pointer]
+```

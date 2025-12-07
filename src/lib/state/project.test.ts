@@ -157,7 +157,9 @@ describe('projectState', () => {
 				mask: {
 					type: 'upload' as const,
 					threshold: 200,
-					invert: true
+					invert: true,
+					scale: 100,
+					rotation: 0
 				},
 				effect: {
 					mode: 'wavy' as const,

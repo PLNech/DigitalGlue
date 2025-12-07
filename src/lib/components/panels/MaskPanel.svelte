@@ -148,7 +148,7 @@
 		{/if}
 	</div>
 
-	<!-- Invert Toggle (always visible) -->
+	<!-- Mask Controls (always visible) -->
 	<div class="mask-options">
 		<label class="checkbox-label">
 			<input
@@ -158,6 +158,40 @@
 			/>
 			<span>Invert Mask</span>
 		</label>
+
+		<!-- Mask Scale -->
+		<div class="control-row">
+			<label class="control-label">
+				<span>Scale</span>
+				<span class="control-value">{$projectState.mask.scale}%</span>
+			</label>
+			<input
+				type="range"
+				min="10"
+				max="500"
+				value={$projectState.mask.scale}
+				oninput={(e) =>
+					projectState.updateMask({ scale: parseInt(e.currentTarget.value) })}
+				class="slider"
+			/>
+		</div>
+
+		<!-- Mask Rotation -->
+		<div class="control-row">
+			<label class="control-label">
+				<span>Rotation</span>
+				<span class="control-value">{$projectState.mask.rotation}°</span>
+			</label>
+			<input
+				type="range"
+				min="0"
+				max="360"
+				value={$projectState.mask.rotation}
+				oninput={(e) =>
+					projectState.updateMask({ rotation: parseInt(e.currentTarget.value) })}
+				class="slider"
+			/>
+		</div>
 	</div>
 </Panel>
 
@@ -316,6 +350,15 @@
 	.mask-options {
 		padding-top: var(--spacing-md);
 		border-top: 1px solid var(--color-border);
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-sm);
+	}
+
+	.control-row {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-xs);
 	}
 
 	.checkbox-label {

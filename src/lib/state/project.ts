@@ -20,6 +20,8 @@ export interface MaskConfig {
 	drawnData?: string;
 	threshold: number; // 0-255
 	invert: boolean;
+	scale: number; // 10-500 (percent)
+	rotation: number; // degrees 0-360
 }
 
 export type EffectMode = 'none' | 'soft-feather' | 'shadow-feather' | 'wavy' | 'torn-paper' | 'gradient-blend';
@@ -60,7 +62,9 @@ const defaultMask: MaskConfig = {
 	type: 'pattern',
 	patternId: 'half-vertical',
 	threshold: 128,
-	invert: false
+	invert: false,
+	scale: 100,
+	rotation: 0
 };
 
 const defaultEffect: EffectConfig = {

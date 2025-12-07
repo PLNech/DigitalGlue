@@ -179,12 +179,23 @@
 				return;
 			}
 
-			const maskData = canvasToImageData(maskCanvas);
+			// Apply scale and rotation transforms to mask
+			const transformedMaskCanvas = transformMask(
+				maskCanvas,
+				maskConfig.scale,
+				maskConfig.rotation,
+				source1Data.width,
+				source1Data.height
+			);
+
+			const maskData = canvasToImageData(transformedMaskCanvas);
 
 			// Composite the images using the mask
 			console.log('[PreviewCanvas] Compositing with mask:', {
 				pattern: patternId,
 				invert: maskConfig.invert,
+				scale: maskConfig.scale,
+				rotation: maskConfig.rotation,
 				dimensions: { width: source1Data.width, height: source1Data.height }
 			});
 
@@ -229,6 +240,50 @@
 	function canvasToImageData(canvas: HTMLCanvasElement): ImageData {
 		const ctx = canvas.getContext('2d')!;
 		return ctx.getImageData(0, 0, canvas.width, canvas.height);
+	}
+
+	function transformMask(
+		sourceCanvas: HTMLCanvasElement,
+		scale: number,
+		rotation: number,
+		targetWidth: number,
+		targetHeight: number
+	): HTMLCanvasElement {
+		const canvas = document.createElement('canvas');
+		canvas.width = targetWidth;
+		canvas.height = targetHeight;
+		const ctx = canvas.getContext('2d')!;
+
+		// Fill with black (default mask background)
+		ctx.fillStyle = '#000000';
+		ctx.fillRect(0, 0, targetWidth, targetHeight);
+
+		// Save context state
+		ctx.save();
+
+		// Move to center for rotation and scaling
+		ctx.translate(targetWidth / 2, targetHeight / 2);
+
+		// Apply rotation (convert degrees to radians)
+		ctx.rotate((rotation * Math.PI) / 180);
+
+		// Apply scale (scale is in percentage, 100% = 1.0)
+		const scaleValue = scale / 100;
+		ctx.scale(scaleValue, scaleValue);
+
+		// Draw the source mask centered
+		ctx.drawImage(
+			sourceCanvas,
+			-sourceCanvas.width / 2,
+			-sourceCanvas.height / 2,
+			sourceCanvas.width,
+			sourceCanvas.height
+		);
+
+		// Restore context state
+		ctx.restore();
+
+		return canvas;
 	}
 
 	function applyFilters(konvaImage: any, source: any) {
