@@ -6,6 +6,8 @@
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D | null = null;
 	let isDrawing = false;
+	let lastX = 0;
+	let lastY = 0;
 
 	type Tool = 'brush' | 'eraser';
 	let activeTool = $state<Tool>('brush');
@@ -30,8 +32,18 @@
 	});
 
 	function startDrawing(e: MouseEvent) {
+		if (!ctx) return;
 		isDrawing = true;
-		draw(e);
+
+		const rect = canvas.getBoundingClientRect();
+		lastX = ((e.clientX - rect.left) / rect.width) * canvas.width;
+		lastY = ((e.clientY - rect.top) / rect.height) * canvas.height;
+
+		// Draw initial dot at starting position
+		ctx.beginPath();
+		ctx.arc(lastX, lastY, brushSize / 2, 0, Math.PI * 2);
+		ctx.fillStyle = activeTool === 'brush' ? '#000000' : '#ffffff';
+		ctx.fill();
 	}
 
 	function stopDrawing() {
@@ -47,10 +59,19 @@
 		const x = ((e.clientX - rect.left) / rect.width) * canvas.width;
 		const y = ((e.clientY - rect.top) / rect.height) * canvas.height;
 
+		// Draw line from last position to current position
 		ctx.beginPath();
-		ctx.arc(x, y, brushSize, 0, Math.PI * 2);
-		ctx.fillStyle = activeTool === 'brush' ? '#000000' : '#ffffff';
-		ctx.fill();
+		ctx.moveTo(lastX, lastY);
+		ctx.lineTo(x, y);
+		ctx.strokeStyle = activeTool === 'brush' ? '#000000' : '#ffffff';
+		ctx.lineWidth = brushSize;
+		ctx.lineCap = 'round';
+		ctx.lineJoin = 'round';
+		ctx.stroke();
+
+		// Update last position
+		lastX = x;
+		lastY = y;
 	}
 
 	function clearCanvas() {

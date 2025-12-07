@@ -174,20 +174,33 @@
 				source2: { width: source2Data.width, height: source2Data.height }
 			});
 
-			// Generate or get mask
+			// Generate or get mask based on type
 			const { generatePatternMask } = await import('$lib/core/patterns');
 			const { compositeImages } = await import('$lib/core/compositor');
 
-			// Use selected pattern or default to half-vertical
-			const patternId = maskConfig.patternId || 'half-vertical';
-			const maskCanvas = generatePatternMask(
-				patternId as any,
-				source1Data.width,
-				source1Data.height
-			);
+			let maskCanvas: HTMLCanvasElement | null = null;
+
+			if (maskConfig.type === 'pattern') {
+				// Generate pattern mask
+				const patternId = maskConfig.patternId || 'half-vertical';
+				maskCanvas = generatePatternMask(
+					patternId as any,
+					source1Data.width,
+					source1Data.height
+				);
+			} else if (maskConfig.type === 'drawn' && maskConfig.drawnData) {
+				// Load drawn mask
+				maskCanvas = await loadMaskImage(maskConfig.drawnData, source1Data.width, source1Data.height);
+			} else if (maskConfig.type === 'upload' && maskConfig.imageData) {
+				// Load uploaded mask image
+				maskCanvas = await loadMaskImage(maskConfig.imageData, source1Data.width, source1Data.height);
+			} else {
+				// Fallback to default pattern
+				maskCanvas = generatePatternMask('half-vertical', source1Data.width, source1Data.height);
+			}
 
 			if (!maskCanvas) {
-				console.error('[PreviewCanvas] Failed to generate mask');
+				console.error('[PreviewCanvas] Failed to generate/load mask');
 				return;
 			}
 
@@ -204,7 +217,8 @@
 
 			// Composite the images using the mask
 			console.log('[PreviewCanvas] Compositing with mask:', {
-				pattern: patternId,
+				type: maskConfig.type,
+				pattern: maskConfig.patternId,
 				invert: maskConfig.invert,
 				scale: maskConfig.scale,
 				rotation: maskConfig.rotation,
@@ -403,6 +417,19 @@
 			img.onerror = reject;
 			img.src = dataUrl;
 		});
+	}
+
+	async function loadMaskImage(dataUrl: string, targetWidth: number, targetHeight: number): Promise<HTMLCanvasElement> {
+		const img = await loadImage(dataUrl);
+		const canvas = document.createElement('canvas');
+		canvas.width = targetWidth;
+		canvas.height = targetHeight;
+		const ctx = canvas.getContext('2d')!;
+
+		// Draw mask image scaled to target size
+		ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+		return canvas;
 	}
 
 	function displayComposite(imageData: ImageData) {
